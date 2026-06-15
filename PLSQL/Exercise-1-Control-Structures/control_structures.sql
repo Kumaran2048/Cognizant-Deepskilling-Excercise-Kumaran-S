@@ -1,30 +1,4 @@
--- Schema setup (for reference/testing)
--- CREATE TABLE Customers (
---     CustomerID NUMBER PRIMARY KEY,
---     Name VARCHAR2(100),
---     DOB DATE,
---     Balance NUMBER,
---     LastModified DATE
--- );
-
--- CREATE TABLE Loans (
---     LoanID NUMBER PRIMARY KEY,
---     CustomerID NUMBER,
---     LoanAmount NUMBER,
---     InterestRate NUMBER,
---     StartDate DATE,
---     EndDate DATE,
---     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
--- );
-
--- ALTER TABLE Customers ADD IsVIP VARCHAR2(10) DEFAULT 'FALSE';
-
-
--- ==========================================
--- Scenario 1: Apply 1% discount to loan interest rates for customers above 60 years old.
--- ==========================================
 DECLARE
-    -- Cursor to find loans of customers who are older than 60 years
     CURSOR c_senior_loans IS
         SELECT l.LoanID, l.InterestRate, c.Name, c.DOB
         FROM Loans l
@@ -41,7 +15,6 @@ BEGIN
         FETCH c_senior_loans INTO v_loan_id, v_interest_rate, v_name, v_dob;
         EXIT WHEN c_senior_loans%NOTFOUND;
         
-        -- Apply 1% discount (reducing the interest rate by 1, e.g., 5% becomes 4%)
         UPDATE Loans
         SET InterestRate = InterestRate - 1
         WHERE LoanID = v_loan_id;
@@ -57,12 +30,7 @@ EXCEPTION
 END;
 /
 
-
--- ==========================================
--- Scenario 2: Promote customer to VIP status based on balance (> $10,000).
--- ==========================================
 DECLARE
-    -- Cursor to fetch all customers
     CURSOR c_customers IS
         SELECT CustomerID, Name, Balance
         FROM Customers;
@@ -98,12 +66,7 @@ EXCEPTION
 END;
 /
 
-
--- ==========================================
--- Scenario 3: Send reminders to customers whose loans are due within the next 30 days.
--- ==========================================
 DECLARE
-    -- Cursor to fetch loans due in the next 30 days
     CURSOR c_due_loans IS
         SELECT l.LoanID, c.Name, l.EndDate
         FROM Loans l
@@ -119,7 +82,6 @@ BEGIN
         FETCH c_due_loans INTO v_loan_id, v_cust_name, v_end_date;
         EXIT WHEN c_due_loans%NOTFOUND;
         
-        -- Print reminder message
         DBMS_OUTPUT.PUT_LINE('Reminder: Customer ' || v_cust_name || ', your loan (ID: ' || v_loan_id || ') is due on ' || TO_CHAR(v_end_date, 'YYYY-MM-DD') || '. Please ensure payment is processed.');
     END LOOP;
     CLOSE c_due_loans;

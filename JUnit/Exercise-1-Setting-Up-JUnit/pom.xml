@@ -13,7 +13,6 @@
     </properties>
 
     <dependencies>
-        <!-- JUnit 4 Dependency as requested -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
