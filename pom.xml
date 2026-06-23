@@ -15,5 +15,6 @@
         <module>Mockito/Exercise-1-Mocking-and-Stubbing</module>
         <module>Mockito/Exercise-2-Verifying-Interactions</module>
         <module>SLF4J logging framework/Exercise-1-Logging-Error-Messages</module>
+        <module>Spring Core and Maven/LibraryManagement</module>
     </modules>
 </project>
