@@ -1,0 +1,67 @@
+Difference between JPA, Hibernate, and Spring Data JPA
+1. Introduction
+This hands-on focuses on understanding and comparing three key components used for persistence in Java applications: JPA (Java Persistence API), Hibernate, and Spring Data JPA. It does not involve creating a separate Eclipse project, as the objective is conceptual understanding through code examples.
+2. Java Persistence API (JPA)
+- A specification (JSR 338) for persisting, reading, and managing data using Java objects.
+- Defines interfaces and annotations for ORM.
+- No implementation itself; needs a provider like Hibernate.
+- Promotes database-independent persistence logic.
+3. Hibernate
+- A popular ORM tool that implements the JPA specification.
+- Offers advanced features like lazy loading, caching, and HQL.
+- Requires more boilerplate code compared to Spring Data JPA.
+- Manages sessions and transactions manually unless integrated with Spring.
+4. Spring Data JPA
+- Provides an abstraction layer over JPA implementations like Hibernate.
+- Minimizes boilerplate code by using auto-generated methods.
+- Integrates with Spring’s transaction management and dependency injection.
+- Uses repositories such as JpaRepository to simplify CRUD operations.
+5. Key Differences
+Feature	JPA	Hibernate	Spring Data JPA
+Type	Specification	Implementation	Abstraction layer
+Boilerplate Code	Moderate	High	Very Low
+Provider	None	Yes (Hibernate)	Uses JPA provider
+Ease of Use	Medium	Medium	High
+Transaction Handling	Manual or Spring-managed	Manual (or with Spring)	Automatic with Spring
+6. Code Comparison
+Hibernate Code:
+
+public Integer addEmployee(Employee employee) {
+    Session session = factory.openSession();
+    Transaction tx = null;
+    Integer employeeID = null;
+
+    try {
+        tx = session.beginTransaction();
+        employeeID = (Integer) session.save(employee); 
+        tx.commit();
+    } catch (HibernateException e) {
+        if (tx != null) tx.rollback();
+        e.printStackTrace();
+    } finally {
+        session.close();
+    }
+    return employeeID;
+}
+
+Spring Data JPA Code:
+EmployeeRepository.java
+
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+}
+
+EmployeeService.java
+
+@Autowired
+private EmployeeRepository employeeRepository;
+
+@Transactional
+public void addEmployee(Employee employee) {
+    employeeRepository.save(employee);
+}
+
+7. Conclusion
+Spring Data JPA significantly simplifies application development by reducing boilerplate code and leveraging Spring’s ecosystem. Hibernate remains a powerful ORM tool for advanced use cases but requires more manual handling. JPA serves as the foundation by defining the persistence specification.
+8. References
+- https://dzone.com/articles/what-is-the-difference-between-hibernate-and-sprin-1
+- https://www.javaworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html
